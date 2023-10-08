@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 const Register = () => {
   const [data, setData] = useState({});
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   // Handle Change Function
   const handleChange = (e) => {
     setData({
@@ -15,16 +18,24 @@ const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(data);
-
+    if (!data.username || !data.email || !data.password) {
+      toast("Please fill out all fields.");
+      return;
+    }
+    setLoading(true);
     axios
       .post("http://localhost:8082/api/v1/register", data)
       .then((response) => {
-        console.log("User Created Successfully", response.data);
+        console.log(response.data);
         toast("User Created Successfully");
+        setLoading(false);
+        navigate("/login");
       })
       .catch((error) => {
         console.error("Something went wrong", error);
         toast("Something went wrong");
+        setLoading(false);
+        setError(error);
       });
   };
 
@@ -54,10 +65,11 @@ const Register = () => {
           onChange={handleChange}
         />
         <button
+          disabled={loading}
           className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-75 cursor-pointer"
           type="submit"
         >
-          Register
+          {loading ? "Loading.." : "Register"}
         </button>
       </form>
       <div className="flex gap-2 mt-5">
@@ -66,6 +78,9 @@ const Register = () => {
           Login
         </Link>
       </div>
+      {error && (
+        <p className="text-red-700 text-xl underline">{error.message}</p>
+      )}
     </div>
   );
 };
