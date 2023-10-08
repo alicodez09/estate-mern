@@ -18,9 +18,9 @@ const Register = async (req, res) => {
       data: response,
     });
   } catch (error) {
+    console.log(error);
     res.json({
       message: "Something wents wrong",
-      status: 500,
       data: error.message,
     });
   }
