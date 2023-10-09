@@ -12,6 +12,7 @@ connectDb();
 const PORT = process.env.PORT;
 
 app.use(express.json());
+
 app.use(cors());
 // Routes
 app.use("/api/v1", authRouter);

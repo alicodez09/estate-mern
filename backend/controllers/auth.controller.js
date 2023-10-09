@@ -46,12 +46,14 @@ const Login = async (req, res) => {
         message: "Invalid Password",
       });
     }
-
+    console.log(validUser._doc);
     const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
 
+    const { passwordHash: userPass, password, ...user } = validUser._doc; //This will not show senstive information of validUser like password and hashed password from the document
     res.cookie("access_token", token, { httpOnly: true }).status(200).json({
       message: "Login Successfully",
-      data: validUser,
+      status: 200,
+      data: user,
     });
   } catch (error) {
     console.error(error);
@@ -61,4 +63,5 @@ const Login = async (req, res) => {
     });
   }
 };
+
 module.exports = { Register, Login };
